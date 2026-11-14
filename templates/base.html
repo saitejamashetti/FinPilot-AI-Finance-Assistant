@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{% block title %}FinPilot{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="theme-{{ session.get('theme', 'light') }}">
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand-box">
+                <div class="brand-mark">F</div>
+                <div>
+                    <h1>FinPilot</h1>
+                    <small>Think Before You Spend.</small>
+                </div>
+            </div>
+            {% if current_user.is_authenticated %}
+            <button type="button" class="btn btn-outline-light mobile-nav-toggle" id="sidebarToggle"
+                    aria-expanded="false" aria-controls="primaryNavigation">
+                <i class="fa-solid fa-bars" aria-hidden="true"></i> Menu
+            </button>
+            {% endif %}
+
+            {% if current_user.is_authenticated %}
+            <nav class="nav-menu" id="primaryNavigation">
+                <a href="{{ url_for('main.dashboard') }}" class="nav-link"><i class="fa-solid fa-house"></i> Overview</a>
+                <a href="{{ url_for('transactions.transactions') }}" class="nav-link"><i class="fa-solid fa-wallet"></i> Transactions</a>
+                <a href="{{ url_for('transactions.transactions') }}#add-transaction" class="nav-link"><i class="fa-solid fa-tags"></i> AI Expense Categorization</a>
+                <a href="{{ url_for('budgets.budgets') }}" class="nav-link"><i class="fa-solid fa-chart-pie"></i> Budgets</a>
+                <a href="{{ url_for('guardian.guardian') }}" class="nav-link"><i class="fa-solid fa-shield-halved"></i> Smart Spending Guardian</a>
+                <a href="{{ url_for('goals.savings_goals') }}" class="nav-link"><i class="fa-solid fa-piggy-bank"></i> Savings Goals</a>
+                <a href="{{ url_for('analytics.subscriptions') }}" class="nav-link"><i class="fa-solid fa-repeat"></i> Subscription Manager</a>
+                <a href="{{ url_for('analytics.anomalies') }}" class="nav-link"><i class="fa-solid fa-magnifying-glass-chart"></i> Unusual Spending Detector</a>
+                <a href="{{ url_for('bills.bills') }}" class="nav-link"><i class="fa-regular fa-calendar-check"></i> Bill Reminders</a>
+                <a href="{{ url_for('analytics.analytics') }}" class="nav-link"><i class="fa-solid fa-chart-line"></i> Spending Analytics</a>
+                <a href="{{ url_for('analytics.reports') }}" class="nav-link"><i class="fa-solid fa-file-lines"></i> Reports</a>
+                <a href="{{ url_for('analytics.health_score') }}" class="nav-link"><i class="fa-solid fa-heart-pulse"></i> Financial Health</a>
+                <a href="{{ url_for('analytics.simulator') }}" class="nav-link"><i class="fa-solid fa-calculator"></i> Savings Simulator</a>
+                <a href="{{ url_for('main.finance_assistant') }}" class="nav-link"><i class="fa-solid fa-robot"></i> Finance Assistant</a>
+                <a href="{{ url_for('analytics.settings_page') }}" class="nav-link"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="{{ url_for('auth.account_security') }}" class="nav-link"><i class="fa-solid fa-lock"></i> Account Security</a>
+            </nav>
+            {% endif %}
+        </aside>
+
+        <main class="main-panel">
+            {% if current_user.is_authenticated %}
+            <header class="topbar">
+                <div>
+                    <h2>{% block page_title %}Dashboard{% endblock %}</h2>
+                </div>
+                <div class="topbar-actions">
+                    <span class="user-pill"><i class="fa-solid fa-user"></i> {{ current_user.fullname }}</span>
+                    <form method="POST" action="{{ url_for('auth.logout') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+                    </form>
+                </div>
+            </header>
+            {% endif %}
+
+            <div class="content-area">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category if category in ['success','danger','warning','info'] else 'info' }} alert-dismissible fade show mt-3" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

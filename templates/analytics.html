@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Spending analytics | FinPilot{% endblock %}
+{% block page_title %}Spending Analytics{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="panel-card">
+            <h4>Summary</h4>
+            <div class="row mt-3 g-3">
+                <div class="col-md-6">
+                    <div class="metric-card">
+                        <span class="label">Income</span>
+                        <div class="value">₹{{ '%.2f'|format(summary.income) }}</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="metric-card">
+                        <span class="label">Expenses</span>
+                        <div class="value">₹{{ '%.2f'|format(summary.expenses) }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="panel-card">
+            <h4>Budget warnings</h4>
+            {% for alert in budget_alerts %}
+            <div class="alert alert-warning mt-2">{{ alert.category }} is at {{ alert.usage }}% usage, remaining ₹{{ '%.2f'|format(alert.remaining) }}.</div>
+            {% else %}
+            <div class="empty-state mt-3">No active budget alerts.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="panel-card mt-4">
+    <h4>Monthly expense trend</h4>
+    {% if forecast.available %}
+    <p class="mt-3">Estimated expenses for {{ forecast.next_month }}: <strong>₹{{ '%.2f'|format(forecast.prediction) }}</strong></p>
+    <p class="small text-muted">{{ forecast.explanation }}</p>
+    {% if forecast.mae is not none %}
+    <p class="small text-muted">Chronological holdout evaluation — MAE ₹{{ '%.2f'|format(forecast.mae) }}, RMSE ₹{{ '%.2f'|format(forecast.rmse) }}, R² {{ '%.3f'|format(forecast.r2) }}.</p>
+    {% endif %}
+    <canvas id="trendChart" height="120"
+            data-labels="{{ (forecast.labels + [forecast.next_month])|tojson|forceescape }}"
+            data-values="{{ (forecast.values + [forecast.prediction])|tojson|forceescape }}"></canvas>
+    {% else %}
+    <div class="empty-state mt-3">{{ forecast.reason }} Forecasts are estimates and are shown only with enough history.</div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if forecast.available %}
+<script src="{{ url_for('static', filename='js/analytics.js') }}" defer></script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Finance assistant | FinPilot{% endblock %}
+{% block page_title %}Finance Assistant{% endblock %}
+
+{% block content %}
+<div class="panel-card" style="max-width: 900px; margin: 0 auto;">
+    <h4>Ask your finance question</h4>
+    <form method="POST" class="mt-3">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="question" placeholder="Ask about income, expenses, bills, goals, or recent transactions" required>
+            <button class="btn btn-primary" type="submit">Ask</button>
+        </div>
+    </form>
+
+    {% if response %}
+    <div class="alert alert-success mt-4">
+        <strong>FinPilot says:</strong> {{ response }}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

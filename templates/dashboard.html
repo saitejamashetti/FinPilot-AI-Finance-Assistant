@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | FinPilot{% endblock %}
+{% block page_title %}Overview{% endblock %}
+
+{% block content %}
+<div class="metrics-grid">
+    <div class="metric-card">
+        <span class="label">Total income</span>
+        <div class="value">₹{{ '%.2f'|format(summary.income) }}</div>
+        <div class="trend">+ {{ '%.2f'|format(summary.monthly_income) }} this month</div>
+    </div>
+    <div class="metric-card">
+        <span class="label">Total expenses</span>
+        <div class="value">₹{{ '%.2f'|format(summary.expenses) }}</div>
+        <div class="trend">- {{ '%.2f'|format(summary.monthly_expenses) }} this month</div>
+    </div>
+    <div class="metric-card">
+        <span class="label">Current balance</span>
+        <div class="value">₹{{ '%.2f'|format(summary.balance) }}</div>
+        <div class="trend">Savings rate {{ '%.2f'|format(summary.savings_rate) }}%</div>
+    </div>
+    <div class="metric-card">
+        <span class="label">Budget usage</span>
+        <div class="value">{{ '%.2f'|format(summary.budget_usage) }}%</div>
+        <div class="trend">{{ current_month }}</div>
+    </div>
+    <div class="metric-card">
+        <span class="label">AI model</span>
+        <div class="value">{{ '%.1f'|format(metrics.accuracy * 100) }}%</div>
+        <div class="trend">Holdout accuracy · {{ metrics.test_rows }} test rows</div>
+    </div>
+</div>
+
+<div class="panel-card mb-4">
+    <h4>Expense forecast</h4>
+    {% if forecast.available %}
+    <p class="mb-1">Estimated expenses for {{ forecast.next_month }}: <strong>₹{{ '%.2f'|format(forecast.prediction) }}</strong></p>
+    <small class="text-muted">{{ forecast.explanation }}</small>
+    {% else %}
+    <div class="empty-state">{{ forecast.reason }}</div>
+    {% endif %}
+</div>
+
+<div class="two-col">
+    <div class="panel-card">
+        <h4>Spending by category</h4>
+        <canvas id="categoryChart" height="180"
+                data-categories="{{ categories|tojson|forceescape }}"></canvas>
+    </div>
+    <div class="panel-card">
+        <h4>AI insights</h4>
+        <ul class="list-group list-group-flush">
+            {% for insight in insights %}
+            <li class="list-group-item">{{ insight }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<div class="two-col">
+    <div class="panel-card">
+        <h4>Recent transactions</h4>
+        <table class="table table-hover mt-3">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tx in recent_transactions %}
+                <tr>
+                    <td>{{ tx.description }}</td>
+                    <td><span class="summary-tag">{{ tx.type }}</span></td>
+                    <td>₹{{ '%.2f'|format(tx.amount) }}</td>
+                    <td>{{ tx.date }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="text-muted text-center py-3">No transactions yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="panel-card">
+        <h4>Upcoming bills</h4>
+        {% for bill in upcoming_bills %}
+        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+            <div>
+                <strong>{{ bill.name }}</strong><br>
+                <small class="{{ 'text-danger' if bill.payment_status != 'Paid' and bill.due_date < today else 'text-muted' }}">
+                    {{ 'Overdue · ' if bill.payment_status != 'Paid' and bill.due_date < today else '' }}{{ bill.due_date }}
+                </small>
+            </div>
+            <span>₹{{ '%.2f'|format(bill.amount) }}</span>
+        </div>
+        {% else %}
+        <div class="empty-state mt-3">No reminders scheduled.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}" defer></script>
+{% endblock %}

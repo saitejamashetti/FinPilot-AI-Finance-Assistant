@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Financial health | FinPilot{% endblock %}
+{% block page_title %}Financial Health Score{% endblock %}
+
+{% block content %}
+<div class="panel-card" style="max-width: 800px; margin: 0 auto;">
+    <h4>Educational financial health indicator</h4>
+    <div class="text-center my-4">
+        <div class="display-3 fw-bold">{{ (score|string + '/100') if score is not none else 'Not enough data' }}</div>
+        <p class="text-muted">This is an educational indicator and not an official credit score.</p>
+        <p class="small text-muted">Current-month components for {{ current_month }}; components without recorded data are excluded.</p>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="metric-card">
+                <span class="label">Savings rate</span>
+                <div class="value">{{ ('%.2f'|format(savings_rate) + '%') if savings_rate is not none else 'N/A' }}</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="metric-card">
+                <span class="label">Budget adherence</span>
+                <div class="value">{{ ('%.2f'|format(budget_score) + '%') if budget_score is not none else 'N/A' }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <h5>How this score is built</h5>
+        <ul>
+            <li>Savings component is the current-month savings ratio, clamped to 0–100.</li>
+            <li>Budget component is reduced by the combined overspend as a share of applicable budget limits.</li>
+            <li>The displayed score is the mean of available components; it is not an official financial assessment.</li>
+        </ul>
+        <h5>Suggestions</h5>
+        <ul>{% for suggestion in suggestions %}<li>{{ suggestion }}</li>{% endfor %}</ul>
+    </div>
+</div>
+{% endblock %}

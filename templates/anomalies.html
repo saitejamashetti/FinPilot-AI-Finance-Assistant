@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Unusual spending detector | FinPilot{% endblock %}
+{% block page_title %}Unusual Spending Detector{% endblock %}
+
+{% block content %}
+<div class="panel-card">
+    <h4>Anomaly alerts</h4>
+    {% if not available %}
+    <div class="empty-state mt-3">{{ reason }}</div>
+    {% endif %}
+    {% for alert in alerts %}
+    <div class="alert alert-warning mt-3">
+        <strong>{{ alert.description }}</strong><br>
+        {{ alert.reason }}<br>
+        Historical average: ₹{{ '%.2f'|format(alert.average) }}<br>
+        Difference: ₹{{ '%.2f'|format(alert.difference) }}
+    </div>
+    {% else %}
+    <div class="empty-state mt-3">{% if available %}No unusual patterns were found in your recorded expenses. This does not establish that transactions are safe or fraudulent.{% endif %}</div>
+    {% endfor %}
+</div>
+{% endblock %}

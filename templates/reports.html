@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Reports | FinPilot{% endblock %}
+{% block page_title %}Reports{% endblock %}
+
+{% block content %}
+<div class="panel-card">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Financial summary</h4>
+        <button id="print-report" class="btn btn-outline-secondary" type="button">Print / Save PDF</button>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="metric-card">
+                <span class="label">Income</span>
+                <div class="value">₹{{ '%.2f'|format(summary.income) }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-card">
+                <span class="label">Expenses</span>
+                <div class="value">₹{{ '%.2f'|format(summary.expenses) }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-card">
+                <span class="label">Balance</span>
+                <div class="value">₹{{ '%.2f'|format(summary.balance) }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-card">
+                <span class="label">Savings rate</span>
+                <div class="value">{{ '%.2f'|format(summary.savings_rate) }}%</div>
+            </div>
+        </div>
+    </div>
+
+    <h5>Category totals</h5>
+    <ul>
+        {% for item in categories %}
+        <li>{{ item.label }}: ₹{{ '%.2f'|format(item.value) }}</li>
+        {% else %}
+        <li>No category totals available.</li>
+        {% endfor %}
+    </ul>
+
+    <h5 class="mt-4">Recent transactions</h5>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tx in recent %}
+            <tr>
+                <td>{{ tx.description }}</td>
+                <td>₹{{ '%.2f'|format(tx.amount) }}</td>
+                <td>{{ tx.date }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="3" class="text-center text-muted py-3">No transactions recorded.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

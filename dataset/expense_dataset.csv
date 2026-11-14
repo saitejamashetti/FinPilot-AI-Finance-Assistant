@@ -1,0 +1,81 @@
+description,category
+"grocery store vegetables",Food
+"coffee and sandwich lunch",Food
+"dinner at neighborhood restaurant",Food
+"breakfast on the go",Food
+"groceries and rice",Food
+"fresh fruit and bread",Food
+"weekly supermarket groceries",Food
+"takeaway pizza for dinner",Food
+"milk eggs and cereal",Food
+"lunch at the campus cafeteria",Food
+"bus fare to office",Transport
+"fuel refill for car",Transport
+"metro card recharge",Transport
+"ride share commute",Transport
+"taxi to airport",Transport
+"train ticket to another city",Transport
+"parking fee downtown",Transport
+"bicycle repair at shop",Transport
+"highway toll payment",Transport
+"monthly transit pass",Transport
+"new shoes purchase",Shopping
+"online clothing order",Shopping
+"headphones from store",Shopping
+"gift shopping for birthday",Shopping
+"watch purchase",Shopping
+"new kitchen appliance",Shopping
+"backpack purchase online",Shopping
+"home decor from store",Shopping
+"phone case and screen protector",Shopping
+"winter jacket purchase",Shopping
+"electricity bill payment",Bills
+"rent payment for apartment",Bills
+"internet bill",Bills
+"water bill payment",Bills
+"phone recharge plan",Bills
+"gas utility bill",Bills
+"monthly home insurance premium",Bills
+"mobile phone plan payment",Bills
+"cable television bill",Bills
+"building maintenance charge",Bills
+"movie night with friends",Entertainment
+"concert tickets",Entertainment
+"cinema weekend tickets",Entertainment
+"game purchase",Entertainment
+"music streaming event ticket",Entertainment
+"bowling with friends",Entertainment
+"museum admission",Entertainment
+"video game download",Entertainment
+"theater show ticket",Entertainment
+"theme park entrance",Entertainment
+"pharmacy medicine",Health
+"doctor appointment fees",Health
+"prescription refill",Health
+"vitamin supply",Health
+"dental cleaning appointment",Health
+"eye examination fee",Health
+"medical laboratory test",Health
+"bandages and first aid supplies",Health
+"health clinic consultation",Health
+"pain relief tablets",Health
+"course enrollment fee",Education
+"textbook purchase",Education
+"online course subscription",Education
+"exam registration fees",Education
+"school tuition payment",Education
+"notebook and pens for class",Education
+"professional certification course",Education
+"language learning class fee",Education
+"science workbook purchase",Education
+"university application fee",Education
+"miscellaneous household item",Other
+"small hardware purchase",Other
+"repair tool purchase",Other
+"postage stamp purchase",Other
+"key cutting service",Other
+"laundry service payment",Other
+"pet supplies from store",Other
+"shoe repair service",Other
+"document photocopy service",Other
+"batteries for remote control",Other

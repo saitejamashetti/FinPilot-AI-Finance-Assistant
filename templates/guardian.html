@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Smart Spending Guardian | FinPilot{% endblock %}
+{% block page_title %}Smart Spending Guardian{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="panel-card mb-4">
+            <h4>Plan a purchase</h4>
+            <form method="POST" class="mt-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-3">
+                    <label class="form-label" for="item-name">Item name</label>
+                    <input id="item-name" type="text" class="form-control" name="item_name" maxlength="120" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="item-category">Category</label>
+                    <input id="item-category" type="text" class="form-control" name="category" value="Shopping" maxlength="50">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="item-amount">Amount</label>
+                    <input id="item-amount" type="number" min="0.01" step="0.01" class="form-control" name="amount" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="item-reason">Why are you thinking of buying this?</label>
+                    <textarea id="item-reason" class="form-control" name="reason" rows="3" maxlength="1000"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Review purchase</button>
+            </form>
+        </div>
+
+        <div class="panel-card mb-4">
+            <h4>Personal preferences</h4>
+            <form method="POST" action="{{ url_for('guardian.update_preferences') }}" class="mt-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="set_limit">
+                <label class="form-label" for="shopping-limit">Monthly shopping limit</label>
+                <div class="input-group">
+                    <input id="shopping-limit" type="number" min="0.01" step="0.01" class="form-control" name="monthly_limit" value="{{ monthly_limit or '' }}" required>
+                    <button class="btn btn-outline-success" type="submit">Save</button>
+                </div>
+            </form>
+            <form method="POST" action="{{ url_for('guardian.update_preferences') }}" class="mt-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="add_avoid">
+                <label class="form-label" for="avoid-term">Add to avoid list</label>
+                <div class="input-group">
+                    <input id="avoid-term" type="text" class="form-control" name="term" maxlength="120" placeholder="e.g. impulse gadgets" required>
+                    <button class="btn btn-outline-secondary" type="submit">Add</button>
+                </div>
+            </form>
+            {% for item in avoid_terms %}
+            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                <span>{{ item.term }}</span>
+                <form method="POST" action="{{ url_for('guardian.delete_avoid', preference_id=item.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Remove {{ item.term }}">Remove</button>
+                </form>
+            </div>
+            {% else %}
+            <div class="text-muted small mt-3">No personal avoid-list items yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="panel-card">
+            <h4>Purchase decisions</h4>
+            <p class="text-muted">Suggestions are based on your own budgets, preferences and recorded spending. FinPilot never blocks a purchase.</p>
+            {% for purchase in purchases %}
+            <div class="border rounded p-3 mb-3">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>{{ purchase.item_name }}</strong><br>
+                        <small class="text-muted">{{ purchase.category }} · ₹{{ '%.2f'|format(purchase.amount) }}</small>
+                    </div>
+                    <span class="summary-tag">{{ purchase.decision }}</span>
+                </div>
+                {% if purchase.reason %}
+                <p class="mb-2 mt-2 text-muted">{{ purchase.reason }}</p>
+                {% endif %}
+                <ul class="small mt-3">
+                    {% for warning in reviews[purchase.id] %}
+                    <li>{{ warning }}</li>
+                    {% endfor %}
+                </ul>
+                <p class="small text-muted">You could wait 24 hours, add it to your wishlist, mark it necessary, cancel, or buy anyway.</p>
+                <form method="POST" action="{{ url_for('guardian.purchase_decision', purchase_id=purchase.id) }}" class="d-flex gap-2">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <select class="form-select" name="decision" aria-label="Purchase decision">
+                        {% for decision in ['Pending', 'Wait 24h', 'Wishlist', 'Necessary', 'Cancelled', 'Buy anyway'] %}
+                        <option value="{{ decision }}" {% if purchase.decision == decision %}selected{% endif %}>{{ 'Wait 24 hours' if decision == 'Wait 24h' else decision }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-primary btn-sm" type="submit">Save decision</button>
+                </form>
+            </div>
+            {% else %}
+            <div class="empty-state">No planned purchases logged yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
